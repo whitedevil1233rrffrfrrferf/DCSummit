@@ -4,6 +4,11 @@ from email.message import EmailMessage
 import smtplib
 import os
 from datetime import datetime
+from dotenv import load_dotenv
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+load_dotenv()
+SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
 app = Flask(__name__)
 app.secret_key = 'dc_summit_2025_secret_key_123'
@@ -75,15 +80,23 @@ def registrations():
 
 # Email sending function
 def send_confirmation_email(to_email, name):
-    msg = EmailMessage()
-    msg['Subject'] = 'Registration Successful'
-    msg['From'] = 'varun@qaoncloud.com'
-    msg['To'] = to_email
-    msg.set_content(f"Hi {name},\n\nThank you for registering!\n\n- QAonCloud Team")
-
-    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-        smtp.login('varun@qaoncloud.com', 'mcfzcfpuxchnzrll')  # app password
-        smtp.send_message(msg)
+    message = Mail(
+        from_email='varun@qaoncloud.com',   # must match your verified sender
+        to_emails=to_email,
+        subject='Registration Successful',
+        html_content=f"""
+        <p>Hi {name},</p>
+        <p>Thank you for registering for the DC Summit!</p>
+        <p>- QAonCloud Team</p>
+        """
+    )
+    
+    try:
+        sg = SendGridAPIClient(SENDGRID_API_KEY)
+        response = sg.send(message)
+        print(f"Email sent successfully! Status: {response.status_code}")
+    except Exception as e:
+        print(f"Error sending email: {e}")
 
 if __name__ == '__main__':
     with app.app_context():
