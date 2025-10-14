@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>DC Summit Internal Registration</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 20px;
+      }
+      .form-container {
+        max-width: 600px;
+        margin: auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 8px;
+        margin-top: 8px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .message {
+        text-align: center;
+        margin-bottom: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form-container">
+      <h2>DC Summit Internal Registration</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div
+        class="message"
+        style="color: {% if category == 'success' %}green{% else %}red{% endif %};"
+      >
+        {{ message }}
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <form method="POST" action="{{ url_for('register') }}">
+        <label>Full Name:</label>
+        <input type="text" name="full_name" required />
+
+        <label>Employee ID:</label>
+        <input type="text" name="emp_id" required />
+
+        <label>Location:</label>
+        <input type="text" name="location" />
+
+        <label>Date of Birth:</label>
+        <input type="date" name="dob" required />
+
+        <label>Email ID:</label>
+        <input type="email" name="email" required />
+
+        <label>Business Unit (Under HR/L&D):</label>
+        <input type="text" name="business_unit" />
+
+        <label>Emergency Contact Number:</label>
+        <input type="text" name="emergency_contact" />
+
+        <label>Consent for photography & recording:</label>
+        <select name="consent" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option></select
+        ><br /><br />
+
+        <label>Health Issues / Medical Conditions:</label>
+        <textarea name="medical_conditions" rows="3"></textarea>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </body>
+</html>
