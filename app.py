@@ -12,7 +12,7 @@ import base64
 import uuid
 load_dotenv()
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-
+APP_URL = "192.168.1.233"
 app = Flask(__name__)
 app.secret_key = 'dc_summit_2025_secret_key_123'
 # Configure SQLite database
@@ -55,7 +55,7 @@ def register():
             ##UNIQUE QR CODE GENERATION
 
             unique_id = str(uuid.uuid4())
-            qr_data = f"https://{request.host}/verify/{unique_id}"
+            qr_data = f"{APP_URL}/verify/{emp_id}"
             qr_img = qrcode.make(qr_data)
             qr_dir = os.path.join('static', 'qrcodes')
             os.makedirs(qr_dir, exist_ok=True)
@@ -121,6 +121,13 @@ def send_confirmation_email(to_email, name, qr_path):
         print(f"Email sent successfully! Status: {response.status_code}")
     except Exception as e:
         print(f"Error sending email: {e}")
+
+@app.route('/verify/<emp_id>')
+def verify(emp_id):
+    user = Registration.query.filter_by(emp_id=emp_id).first()
+    if user:
+        return f"<h1>{user.full_name} ({user.emp_id}) is Verified ✅</h1>"
+    return "<h1>Invalid QR ❌</h1>"
 
 with app.app_context():
     db.create_all()
