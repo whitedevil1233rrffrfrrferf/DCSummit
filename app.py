@@ -7,6 +7,9 @@ from datetime import datetime
 from dotenv import load_dotenv
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+import qrcode
+import base64
+import uuid
 load_dotenv()
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 
@@ -49,6 +52,16 @@ def register():
             consent = True if request.form.get('consent') == 'yes' else False
             medical_conditions = request.form['medical_conditions']
 
+            ##UNIQUE QR CODE GENERATION
+
+            unique_id = str(uuid.uuid4())
+            qr_data = f"https://{request.host}/verify/{unique_id}"
+            qr_img = qrcode.make(qr_data)
+            qr_dir = os.path.join('static', 'qrcodes')
+            os.makedirs(qr_dir, exist_ok=True)
+            qr_path = os.path.join(qr_dir, f"{unique_id}.png")
+            qr_img.save(qr_path)
+
             new_reg = Registration(
                 full_name=full_name,
                 emp_id=emp_id,
@@ -63,7 +76,7 @@ def register():
 
             db.session.add(new_reg)
             db.session.commit()
-            send_confirmation_email(email, full_name)
+            send_confirmation_email(email, full_name, qr_path)
             flash('Registration submitted successfully!', 'success')
             return redirect(url_for('register'))
 
@@ -73,24 +86,35 @@ def register():
 
     return render_template('index.html')
 
-@app.route('/registrations')
-def registrations():
-    all_users = Registration.query.all()
-    return render_template('registrations.html', users=all_users)
+def send_confirmation_email(to_email, name, qr_path):
+    # Read the QR image and encode it to base64
+    with open(qr_path, 'rb') as f:
+        qr_data = f.read()
+    encoded_qr = base64.b64encode(qr_data).decode()
 
-# Email sending function
-def send_confirmation_email(to_email, name):
+    # Create the SendGrid Mail object
     message = Mail(
         from_email='varun@qaoncloud.com',   # must match your verified sender
         to_emails=to_email,
-        subject='Registration Successful',
+        subject='Registration Successful - Your QR Code',
         html_content=f"""
         <p>Hi {name},</p>
         <p>Thank you for registering for the DC Summit!</p>
-        <p>- QAonCloud Team</p>
+        <p>Please find your unique QR code attached below. Scan it at the event for verification.</p>
+        <p>- SUMMIT Team</p>
         """
     )
-    
+
+    # Attach the QR code
+    from sendgrid.helpers.mail import Attachment, FileContent, FileName, FileType, Disposition
+    attachment = Attachment(
+        FileContent(encoded_qr),
+        FileName('your_qr_code.png'),
+        FileType('image/png'),
+        Disposition('attachment')
+    )
+    message.attachment = attachment
+
     try:
         sg = SendGridAPIClient(SENDGRID_API_KEY)
         response = sg.send(message)
