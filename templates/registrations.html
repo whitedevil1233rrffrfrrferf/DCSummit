@@ -2,39 +2,75 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>All Registrations</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background-color: #f7f7f7;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+      tr:hover {
+        background-color: #e0f7fa;
+      }
+    </style>
   </head>
   <body>
-    <div class="form-container">
-      <h2>📋 All Registrations</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for user in users %}
-          <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.status }}</td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="4">No registrations yet.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+    <h1>All Registrations</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Full Name</th>
+          <th>Emp ID</th>
+          <th>Location</th>
+          <th>DOB</th>
+          <th>Email</th>
+          <th>Business Unit</th>
+          <th>Emergency Contact</th>
+          <th>Consent</th>
+          <th>Medical Conditions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for reg in registrations %}
+        <tr>
+          <td>{{ reg.id }}</td>
+          <td>{{ reg.full_name }}</td>
+          <td>{{ reg.emp_id }}</td>
+          <td>{{ reg.location}}</td>
+          <td>{{ reg.dob.strftime('%Y-%m-%d') }}</td>
+          <td>{{ reg.email }}</td>
+          <td>{{ reg.business_unit }}</td>
+          <td>{{ reg.emergency_contact}}</td>
+          <td>{{ reg.consent}}</td>
+          <td>{{ reg.medical_conditions}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </body>
 </html>

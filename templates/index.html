@@ -47,7 +47,7 @@
   </head>
   <body>
     <div class="form-container">
-      <h2>DC Summit Internal Registration</h2>
+      <h2>DC Summit 2025 - Registration</h2>
 
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %} {% for category, message in messages %}
@@ -60,36 +60,66 @@
       {% endfor %} {% endif %} {% endwith %}
 
       <form method="POST" action="{{ url_for('register') }}">
-        <label>Full Name:</label>
+        <label
+          >Full Name (As Per HRMS): <span style="color: red">*</span></label
+        >
         <input type="text" name="full_name" required />
 
-        <label>Employee ID:</label>
+        <label>Employee ID: <span style="color: red">*</span></label>
         <input type="text" name="emp_id" required />
 
-        <label>Location:</label>
-        <input type="text" name="location" />
+        <label>Location: <span style="color: red">*</span></label>
+        <select name="location" required>
+          <option value="" disabled selected>Select your location</option>
+          <option value="Kollumangudi">Kollumangudi</option>
+          <option value="Kaup">Kaup</option>
+          <option value="TN Palyam">TN Palyam</option>
+          <option value="Villupuram">Villupuram</option>
+          <option value="Chennai">Chennai</option>
+          <option value="Remote">Remote</option>
+        </select>
 
-        <label>Date of Birth:</label>
+        <label>Date of Birth: <span style="color: red">*</span></label>
         <input type="date" name="dob" required />
 
-        <label>Email ID:</label>
+        <label>Email ID: <span style="color: red">*</span></label>
         <input type="email" name="email" required />
 
-        <label>Business Unit (Under HR/L&D):</label>
-        <input type="text" name="business_unit" />
+        <label>Business Unit: <span style="color: red">*</span></label>
+        <select name="business_unit" required>
+          <option value="" disabled selected>Select your business unit</option>
+          <option value="QAoncloud">QAoncloud</option>
+          <option value="Accountifi">Accountifi</option>
+          <option value="Disha">Disha</option>
+          <option value="BPM">BPM</option>
+          <option value="DAL">DAL</option>
+          <option value="Managed AI OPS">Managed AI OPS</option>
+          <option value="HR">HR</option>
+          <option value="IT">IT</option>
+          <option value="DTOUCH">DTOUCH</option>
+          <option value="Others">Others</option>
+        </select>
 
-        <label>Emergency Contact Number:</label>
-        <input type="text" name="emergency_contact" />
+        <label
+          >Emergency Contact Number: <span style="color: red">*</span></label
+        >
+        <input type="text" name="emergency_contact" required />
 
-        <label>Consent for photography & recording:</label>
+        <label
+          >Consent for Photography & Recording:
+          <span style="color: red">*</span></label
+        >
         <select name="consent" required>
           <option value="" disabled selected>Select an option</option>
           <option value="yes">Yes</option>
           <option value="no">No</option></select
         ><br /><br />
 
-        <label>Health Issues / Medical Conditions:</label>
-        <textarea name="medical_conditions" rows="3"></textarea>
+        <label
+          >Health Issues / Medical Conditions:
+          <span style="color: red">*</span></label
+        >
+        <textarea name="medical_conditions" rows="3" required></textarea>
 
         <button type="submit">Submit</button>
       </form>

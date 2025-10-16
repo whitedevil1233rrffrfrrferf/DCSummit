@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verifications</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 40px;
+        background: #f7f7f7;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+      }
+      th,
+      td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+      }
+      th {
+        background: #4caf50;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background: #f2f2f2;
+      }
+      tr:hover {
+        background: #e0f7fa;
+      }
+      button {
+        cursor: pointer;
+        background: transparent;
+        border: none;
+        font-size: 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Verifications</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Full Name</th>
+          <th>Emp ID</th>
+          <th>Verified On</th>
+          <th>ID Card</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for v in verifications %}
+        <tr>
+          <td>{{ v.id }}</td>
+          <td>{{ v.full_name }}</td>
+          <td>{{ v.emp_id }}</td>
+          <td>{{ v.verified_on.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+          <td>
+            {% if v.id_card %} ✅ {% else %}
+            <form
+              method="POST"
+              action="{{ url_for('issue_id_card', verification_id=v.id) }}"
+            >
+              <button type="submit">✔️</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </body>
+</html>

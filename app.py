@@ -17,6 +17,9 @@ app = Flask(__name__)
 app.secret_key = 'dc_summit_2025_secret_key_123'
 # Configure SQLite database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///registrations.db'
+app.config['SQLALCHEMY_BINDS'] = {
+    'verifications': 'sqlite:///verifications.db'
+}
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -32,6 +35,14 @@ class Registration(db.Model):
     emergency_contact = db.Column(db.String(20))
     consent = db.Column(db.Boolean, default=False)
     medical_conditions = db.Column(db.Text)
+
+class Verification(db.Model):
+    __bind_key__ = 'verifications'
+    id = db.Column(db.Integer, primary_key=True)
+    emp_id = db.Column(db.String(50), nullable=False, unique=True)
+    full_name = db.Column(db.String(120), nullable=False)
+    verified_on = db.Column(db.DateTime, default=db.func.current_timestamp())
+    id_card = db.Column(db.Boolean, default=False)  # New field
 
 # Routes
 @app.route('/')
@@ -125,11 +136,41 @@ def send_confirmation_email(to_email, name, qr_path):
 @app.route('/verify/<emp_id>')
 def verify(emp_id):
     user = Registration.query.filter_by(emp_id=emp_id).first()
-    if user:
-        return f"<h1>{user.full_name} ({user.emp_id}) is Verified ✅</h1>"
-    return "<h1>Invalid QR ❌</h1>"
+    if not user:
+        return "<h1>Invalid QR ❌</h1>"
+
+    # Check if already verified in Verification table
+    verification = Verification.query.filter_by(emp_id=emp_id).first()
+    if not verification:
+        verification = Verification(
+            emp_id=user.emp_id,
+            full_name=user.full_name
+        )
+        db.session.add(verification)
+        db.session.commit()
+
+    return f"<h1>{user.full_name} ({user.emp_id}) is Verified ✅</h1>"
+
+@app.route('/registrations')
+def show_registrations():
+    registrations = Registration.query.all()
+    return render_template('registrations.html', registrations=registrations)
+
+@app.route('/verifications')
+def show_verifications():
+    verifications = Verification.query.all()
+    return render_template('verifications.html', verifications=verifications)
+
+@app.route('/issue_id/<int:verification_id>', methods=['POST'])
+def issue_id_card(verification_id):
+    verification = Verification.query.get_or_404(verification_id)
+    verification.id_card = True
+    db.session.commit()
+    return redirect(url_for('show_verifications'))
+
 
 with app.app_context():
-    db.create_all()
+    db.create_all()    # Creates Registration table in registrations.db
+    db.create_all(bind='verifications')  # Creates Verification table in verifications.db
 if __name__ == '__main__':
     app.run(debug=True)  # Only used for local testing
