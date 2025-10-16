@@ -170,7 +170,6 @@ def issue_id_card(verification_id):
 
 
 with app.app_context():
-    db.create_all()    # Creates Registration table in registrations.db
-    db.create_all(bind='verifications')  # Creates Verification table in verifications.db
+    db.create_all()
 if __name__ == '__main__':
     app.run(debug=True)  # Only used for local testing
