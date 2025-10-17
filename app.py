@@ -16,7 +16,10 @@ APP_URL = "https://dcsummit.onrender.com"
 app = Flask(__name__)
 app.secret_key = 'dc_summit_2025_secret_key_123'
 # Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+raw_db_url = os.getenv("DATABASE_URL", "")
+clean_db_url = raw_db_url.replace("\n", "").replace("\r", "").strip()
+
+app.config['SQLALCHEMY_DATABASE_URI'] = clean_db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
