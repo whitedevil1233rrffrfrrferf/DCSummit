@@ -16,10 +16,7 @@ APP_URL = "https://dcsummit.onrender.com"
 app = Flask(__name__)
 app.secret_key = 'dc_summit_2025_secret_key_123'
 # Configure SQLite database
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///registrations.db'
-app.config['SQLALCHEMY_BINDS'] = {
-    'verifications': 'sqlite:///verifications.db'
-}
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -37,7 +34,6 @@ class Registration(db.Model):
     medical_conditions = db.Column(db.Text)
 
 class Verification(db.Model):
-    __bind_key__ = 'verifications'
     id = db.Column(db.Integer, primary_key=True)
     emp_id = db.Column(db.String(50), nullable=False, unique=True)
     full_name = db.Column(db.String(120), nullable=False)
