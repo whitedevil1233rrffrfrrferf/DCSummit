@@ -125,7 +125,7 @@ def send_confirmation_email(to_email, name, qr_path):
         <p>Hi {name},</p>
         <p>Thank you for registering for the DC Summit!</p>
         <p>Please find your unique QR code attached below. Scan it at the event for verification.</p>
-        <p>- SUMMIT Team</p>
+        <p>DC SUMMIT 2025 Event Registration team</p>
         """
     )
 
