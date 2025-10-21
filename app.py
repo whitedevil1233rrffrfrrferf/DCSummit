@@ -61,6 +61,20 @@ def register():
             emergency_contact = request.form['emergency_contact']
             consent = True if request.form.get('consent') == 'yes' else False
             medical_conditions = request.form['medical_conditions']
+            allowed_domains=("accountify.co","qaoncloud.com","desicrew.in")
+            if not any(email.endswith(f"@{domain}") for domain in allowed_domains):
+                flash('Email must belong to accountify.co, qaoncloud.com, or desicrew.in domain.', 'danger')
+                return redirect(url_for('register'))
+            existing_emp = Registration.query.filter_by(emp_id=emp_id).first()
+            existing_email = Registration.query.filter_by(email=email).first()
+
+            if existing_emp:
+                flash('Employee ID already exists.', 'danger')
+                return redirect(url_for('register'))
+
+            if existing_email:
+                flash('Email address already registered.', 'danger')
+                return redirect(url_for('register'))
 
             ##UNIQUE QR CODE GENERATION
 

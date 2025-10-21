@@ -104,7 +104,15 @@
         <label
           >Emergency Contact Number: <span style="color: red">*</span></label
         >
-        <input type="text" name="emergency_contact" required />
+        <input
+          type="text"
+          name="emergency_contact"
+          minlength="10"
+          maxlength="10"
+          required
+          placeholder="Enter 10-digit number"
+          oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+        />
 
         <label
           >Consent for Photography & Recording:
