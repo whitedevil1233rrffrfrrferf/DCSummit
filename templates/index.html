@@ -2,39 +2,67 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes"
+    />
     <title>DC Summit Internal Registration</title>
     <style>
+      html,
       body {
         font-family: Arial, sans-serif;
         background-color: #f4f4f9;
         margin: 0;
-        padding: 20px;
+        padding: 10px;
+        height: auto;
+        min-height: 150%;
+        width: 100%;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
       }
       .form-container {
+        width: 100%;
         max-width: 600px;
-        margin: auto;
+        margin: 10px auto 30px auto;
         background: white;
-        padding: 25px;
+        padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+      }
+      h2 {
+        font-size: 1.5rem;
+        text-align: center;
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+
+        line-height: 1.2;
       }
       input,
       textarea,
       select {
         width: 100%;
-        padding: 8px;
-        margin-top: 8px;
+        padding: 10px;
         margin-bottom: 15px;
         border: 1px solid #ccc;
         border-radius: 5px;
+        font-size: 16px; /* Prevents zoom on iOS */
+        box-sizing: border-box;
       }
       button {
         background-color: #007bff;
         color: white;
         border: none;
-        padding: 10px 15px;
+        padding: 12px 15px;
         border-radius: 5px;
         cursor: pointer;
+        width: 100%;
+        font-size: 1rem;
       }
       button:hover {
         background-color: #0056b3;
@@ -42,6 +70,33 @@
       .message {
         text-align: center;
         margin-bottom: 15px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      @media (max-width: 480px) {
+        body {
+          padding: 5px;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .form-container {
+          padding: 15px;
+          margin-bottom: 50px;
+        }
+        h2 {
+          font-size: 1.3rem;
+        }
+        input,
+        textarea,
+        select {
+          padding: 12px;
+          font-size: 16px;
+          margin-bottom: 20px;
+        }
+        button {
+          padding: 15px;
+          margin-top: 10px;
+          margin-bottom: 20px;
+        }
       }
     </style>
   </head>
@@ -53,7 +108,7 @@
       messages %} {% for category, message in messages %}
       <div
         class="message"
-        style="color: {% if category == 'success' %}green{% else %}red{% endif %};"
+        style="color: {% if category == 'success' %}green{% else %}red{% endif %}; background-color: {% if category == 'success' %}#e8f5e9{% else %}#ffebee{% endif %};"
       >
         {{ message }}
       </div>
@@ -63,7 +118,14 @@
         <label
           >Full Name (As Per HRMS): <span style="color: red">*</span></label
         >
-        <input type="text" name="full_name" required />
+        <input
+          type="text"
+          name="full_name"
+          pattern="[A-Za-z\s]+"
+          title="Only letters and spaces allowed"
+          required
+          oninput="this.value = this.value.replace(/[0-9]/g, '');"
+        />
 
         <label>Employee ID: <span style="color: red">*</span></label>
         <input type="text" name="emp_id" required />
@@ -100,29 +162,39 @@
           <option value="DTOUCH">DTOUCH</option>
           <option value="Others">Others</option>
         </select>
-
+        <label>Contact Number: <span style="color: red">*</span></label>
+        <input
+          type="tel"
+          name="contact"
+          minlength="10"
+          maxlength="10"
+          required
+          placeholder="Enter 10-digit number without adding prefix '0'"
+          oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+        />
         <label
           >Emergency Contact Number: <span style="color: red">*</span></label
         >
         <input
-          type="text"
+          type="tel"
           name="emergency_contact"
           minlength="10"
           maxlength="10"
           required
-          placeholder="Enter 10-digit number"
+          placeholder="Enter 10-digit number without adding prefix '0'"
           oninput="this.value = this.value.replace(/[^0-9]/g, '');"
         />
 
         <label
-          >Consent for Photography & Recording:
+          >Willingness to use my photographs taken at DC-Summit-2025 in the
+          Social Media account of Desicrew
           <span style="color: red">*</span></label
         >
         <select name="consent" required>
           <option value="" disabled selected>Select an option</option>
           <option value="yes">Yes</option>
-          <option value="no">No</option></select
-        ><br /><br />
+          <option value="no">No</option>
+        </select>
 
         <label
           >Health Issues / Medical Conditions:

@@ -33,6 +33,7 @@ class Registration(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     business_unit = db.Column(db.String(100))
     emergency_contact = db.Column(db.String(20))
+    contact = db.Column(db.String(20), nullable=False)
     consent = db.Column(db.Boolean, default=False)
     medical_conditions = db.Column(db.Text)
 
@@ -59,12 +60,18 @@ def register():
             email = request.form['email']
             business_unit = request.form['business_unit']
             emergency_contact = request.form['emergency_contact']
+            contact = request.form['contact']
             consent = True if request.form.get('consent') == 'yes' else False
             medical_conditions = request.form['medical_conditions']
-            allowed_domains=("accountify.co","qaoncloud.com","desicrew.in")
+            allowed_domains=("accountifi.co","qaoncloud.com","desicrew.in")
             if not any(email.endswith(f"@{domain}") for domain in allowed_domains):
-                flash('Email must belong to accountify.co, qaoncloud.com, or desicrew.in domain.', 'danger')
+                flash('Email must belong to accountifi.co, qaoncloud.com, or desicrew.in domain.', 'danger')
                 return redirect(url_for('register'))
+            
+            if contact == emergency_contact:
+                flash('Contact number and emergency contact cannot be the same.', 'danger')
+                return redirect(url_for('register'))
+            
             existing_emp = Registration.query.filter_by(emp_id=emp_id).first()
             existing_email = Registration.query.filter_by(email=email).first()
 
@@ -93,6 +100,7 @@ def register():
                 dob=dob,
                 email=email,
                 business_unit=business_unit,
+                contact=contact,
                 emergency_contact=emergency_contact,
                 consent=consent,
                 medical_conditions=medical_conditions
@@ -183,6 +191,7 @@ def issue_id_card(verification_id):
 
 
 with app.app_context():
+    
     db.create_all()
 if __name__ == '__main__':
     app.run(debug=True)  # Only used for local testing
