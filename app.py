@@ -126,7 +126,7 @@ def send_confirmation_email(to_email, name, qr_path):
 
     # Create the SendGrid Mail object
     message = Mail(
-        from_email='varun@qaoncloud.com',   # must match your verified sender
+        from_email='dc-summit-chennai-2025@desicrew.in',   # must match your verified sender
         to_emails=to_email,
         subject='Registration Successful - Your QR Code',
         html_content=f"""
