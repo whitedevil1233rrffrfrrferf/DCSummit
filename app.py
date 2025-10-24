@@ -105,7 +105,7 @@ def register():
                 consent=consent,
                 medical_conditions=medical_conditions
             )
-
+            
             db.session.add(new_reg)
             db.session.commit()
             send_confirmation_email(email, full_name, qr_path)
@@ -131,9 +131,13 @@ def send_confirmation_email(to_email, name, qr_path):
         subject='Registration Successful - Your QR Code',
         html_content=f"""
         <p>Hi {name},</p>
-        <p>Thank you for registering for the DC Summit!</p>
+        <p>Thank you for registering for the DC-Summit-2025!</p>
         <p>Please find your unique QR code attached below. Scan it at the event for verification.</p>
-        <p>DC SUMMIT 2025 Event Registration team</p>
+        
+        <p>Warm regards,</p>
+        
+        <p><strong>DC-SUMMIT-2025 EVENT COMMITTEE.</strong></p>
+
         """
     )
 
