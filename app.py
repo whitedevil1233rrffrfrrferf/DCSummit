@@ -208,6 +208,7 @@ def issue_id_card(verification_id):
 
 
 with app.app_context():
-    db.drop_all().create_all()
+    
+    db.create_all()
 if __name__ == '__main__':
     app.run(debug=True)  # Only used for local testing
