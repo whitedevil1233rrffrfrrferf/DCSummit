@@ -10,6 +10,7 @@ from sendgrid.helpers.mail import Mail
 import qrcode
 import base64
 import uuid
+import re
 load_dotenv()
 SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
 APP_URL = "https://dcsummit.onrender.com"
@@ -45,12 +46,10 @@ class Verification(db.Model):
     id_card = db.Column(db.Boolean, default=False)  # New field
 
 # Routes
-@app.route('/')
+@app.route('/',methods=['GET','POST'])
 def index():
-    return render_template('index.html')
-
-@app.route('/register', methods=['POST','GET'])
-def register():
+    business_units=["QAoncloud","Accountifi","Dhisha","BPM","DAL","Managed AI OPS","HR","IT","Admin","DTOUCH","Others"]
+    locations=["Kollumangudi","Kaup","TN Palyam","Villupuram","Chennai","Remote"]
     if request.method == 'POST':
         try:
             full_name = request.form['full_name']
@@ -64,25 +63,36 @@ def register():
             consent = True if request.form.get('consent') == 'yes' else False
             medical_conditions = request.form['medical_conditions']
             allowed_domains=("accountifi.co","qaoncloud.com","desicrew.in")
+
+            
+
             if not any(email.endswith(f"@{domain}") for domain in allowed_domains):
                 flash('Email must belong to accountifi.co, qaoncloud.com, or desicrew.in domain.', 'danger')
-                return redirect(url_for('register'))
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
             
             if contact == emergency_contact:
                 flash('Contact number and emergency contact cannot be the same.', 'danger')
-                return redirect(url_for('register'))
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
+            
+            if len(contact) < 10 or len(emergency_contact) < 10:
+                flash("Both contact numbers must be exactly 10 digits long.", "error")
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
             
             existing_emp = Registration.query.filter_by(emp_id=emp_id).first()
             existing_email = Registration.query.filter_by(email=email).first()
 
             if existing_emp:
                 flash('Employee ID already exists.', 'danger')
-                return redirect(url_for('register'))
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
 
             if existing_email:
                 flash('Email address already registered.', 'danger')
-                return redirect(url_for('register'))
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
 
+            if not re.match(r'^[A-Za-z0-9]+$', emp_id):
+                flash("Employee ID must contain only letters and numbers (no special characters).", "error")
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
+            
             ##UNIQUE QR CODE GENERATION
 
             unique_id = str(uuid.uuid4())
@@ -110,13 +120,16 @@ def register():
             db.session.commit()
             send_confirmation_email(email, full_name, qr_path)
             flash('Registration submitted successfully!', 'success')
-            return redirect(url_for('register'))
+            return redirect(url_for('index'))
 
         except Exception as e:
             db.session.rollback()
             flash(f'Error: {e}', 'danger')
 
-    return render_template('index.html')
+    return render_template('index.html',form={},business_units=business_units,locations=locations)
+
+
+    
 
 def send_confirmation_email(to_email, name, qr_path):
     # Read the QR image and encode it to base64
@@ -195,7 +208,6 @@ def issue_id_card(verification_id):
 
 
 with app.app_context():
-    
-    db.create_all()
+    db.drop_all().create_all()
 if __name__ == '__main__':
     app.run(debug=True)  # Only used for local testing

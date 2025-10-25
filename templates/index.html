@@ -114,13 +114,14 @@
       </div>
       {% endfor %} {% endif %} {% endwith %}
 
-      <form method="POST" action="{{ url_for('register') }}">
+      <form method="POST" action="{{ url_for('index') }}">
         <label
           >Full Name (As Per HRMS): <span style="color: red">*</span></label
         >
         <input
           type="text"
           name="full_name"
+          value="{{ form.get('full_name', '') }}"
           pattern="[A-Za-z\s]+"
           title="Only letters and spaces allowed"
           required
@@ -128,45 +129,57 @@
         />
 
         <label>Employee ID: <span style="color: red">*</span></label>
-        <input type="text" name="emp_id" required />
+        <input
+          type="text"
+          name="emp_id"
+          value="{{ form.get('emp_id', '') }}"
+          required
+        />
 
         <label>Location: <span style="color: red">*</span></label>
-        <select name="location" required>
+        <select name="location" value="{{ form.get('location', '') }}" required>
           <option value="" disabled selected>Select your location</option>
-          <option value="Kollumangudi">Kollumangudi</option>
-          <option value="Kaup">Kaup</option>
-          <option value="TN Palyam">TN Palyam</option>
-          <option value="Villupuram">Villupuram</option>
-          <option value="Chennai">Chennai</option>
-          <option value="Remote">Remote</option>
+          {% for loc in locations %}
+            <option value="{{ loc }}" {% if form.get('location') == loc %}selected{% endif %}>
+              {{ loc }}
+            </option>
+          {% endfor %}
         </select>
 
         <label>Date of Birth: <span style="color: red">*</span></label>
-        <input type="date" name="dob" required />
+        <input
+          type="date"
+          name="dob"
+          value="{{ form.get('dob', '') }}"
+          required
+        />
 
         <label>Email ID: <span style="color: red">*</span></label>
-        <input type="email" name="email" required />
+        <input
+          type="email"
+          name="email"
+          value="{{ form.get('email', '') }}"
+          required
+        />
 
         <label>Business Unit: <span style="color: red">*</span></label>
-        <select name="business_unit" required>
+        <select
+          name="business_unit"
+          value="{{ form.get('business_unit', '') }}"
+          required
+        >
           <option value="" disabled selected>Select your business unit</option>
-          <option value="QAoncloud">QAoncloud</option>
-          <option value="Accountifi">Accountifi</option>
-          <option value="Dhisha">Dhisha</option>
-          <option value="BPM">BPM</option>
-          <option value="DAL">DAL</option>
-          <option value="Managed AI OPS">Managed AI OPS</option>
-          <option value="HR">HR</option>
-          <option value="IT">IT</option>
-          <option value="Admin">Admin</option>
-          <option value="DTOUCH">DTOUCH</option>
-          <option value="Others">Others</option>
+          {% for unit in business_units %}
+            <option value="{{ unit }}" {% if form.get('business_unit') == unit %}selected{% endif %}>
+              {{ unit }}
+            </option>
+          {% endfor %}
         </select>
         <label>Contact Number: <span style="color: red">*</span></label>
         <input
           type="tel"
           name="contact"
-          minlength="10"
+          value="{{ form.get('contact', '') }}"
           maxlength="10"
           required
           placeholder="Enter 10-digit number without adding prefix '0'"
@@ -178,6 +191,7 @@
         <input
           type="tel"
           name="emergency_contact"
+          value="{{ form.get('emergency_contact', '') }}"
           minlength="10"
           maxlength="10"
           required
@@ -190,18 +204,28 @@
           Social Media account of Desicrew
           <span style="color: red">*</span></label
         >
-        <select name="consent" required>
-          <option value="" disabled selected>Select an option</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
+        <select name="consent" value="{{ form.get('consent', '') }}" required>
+           <option value="" disabled {% if not form.get('consent') %}selected{% endif %}>Select an option</option>
+          <option value="yes" {% if form.get('consent') == 'yes' %}selected{% endif %}>Yes</option>
+          <option value="no" {% if form.get('consent') == 'no' %}selected{% endif %}>No</option>
         </select>
 
         <label
           >Health Issues / Medical Conditions:
           <span style="color: red">*</span></label
         >
-        <textarea name="medical_conditions" rows="3" required></textarea>
-
+        <textarea
+          name="medical_conditions"
+          
+          rows="3"
+          required
+        >{{ form.get('medical_conditions', '') }}</textarea>
+        <p style="color: brown">
+          <strong
+            >NOTE: Please check your spam folder also for registration
+            confirmation.</strong
+          >
+        </p>
         <button type="submit">Submit</button>
       </form>
     </div>
