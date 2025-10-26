@@ -48,12 +48,12 @@ class Verification(db.Model):
 # Routes
 @app.route('/',methods=['GET','POST'])
 def index():
-    business_units=["QAoncloud","Accountifi","Dhisha","BPM","DAL","Managed AI OPS","HR","IT","Admin","DTOUCH","Others"]
-    locations=["Kollumangudi","Kaup","TN Palyam","Villupuram","Chennai","Remote"]
+    business_units=["QAonCloud","Accountifi","DHISHA","BPM","DAL","Managed AI OPS","HR","IT","Admin","DTOUCH","Others"]
+    locations=["Kollumangudi","Kaup","TN Palayam","Villupuram","Chennai","Pune","Delhi","Bangalore","Kolkata"]
     if request.method == 'POST':
         try:
             full_name = request.form['full_name']
-            emp_id = request.form['emp_id']
+            emp_id = request.form['emp_id'].upper()
             location = request.form['location']
             dob = datetime.strptime(request.form['dob'], '%Y-%m-%d').date()
             email = request.form['email']
@@ -91,6 +91,10 @@ def index():
 
             if not re.match(r'^[A-Za-z0-9]+$', emp_id):
                 flash("Employee ID must contain only letters and numbers (no special characters).", "error")
+                return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
+            
+            if not re.match(r'^(DC|DK)\d{4}$', emp_id):
+                flash("Employee ID format should either be  DCXXXX or  DKXXXX.", "error")
                 return render_template('index.html', form=request.form, business_units=business_units,locations=locations)
             
             ##UNIQUE QR CODE GENERATION
