@@ -48,7 +48,7 @@ class Verification(db.Model):
 # Routes
 @app.route('/',methods=['GET','POST'])
 def index():
-    business_units=["QAonCloud","Accountifi","DHISHA","BPM","DAL","Managed AI OPS","HR","IT","Admin","DTOUCH","Others"]
+    business_units=["QAonCloud","Accountifi","DHISHA","BPM","DAL","Managed AI OPS","Human Assets","IT","Admin","DTOUCH","Others"]
     locations=["Kollumangudi","Kaup","TN Palayam","Villupuram","Chennai","Pune","Delhi","Bangalore","Kolkata"]
     if request.method == 'POST':
         try:
